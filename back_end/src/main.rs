@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    const X_RESOLUTION: u16 = 1920;
+    const Y_RESOLUTION: u16 = 1080;
 }
