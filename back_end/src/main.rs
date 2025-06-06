@@ -2,8 +2,8 @@ use rand::Rng;
 fn main() {
     let start = std::time::Instant::now();
     let mut rng = rand::rng();
-    let mut test: [[i64; 3]; 3] = [[100, 0, 50], [-50, 50, 50], [-50, -50, 50]];
-    let mut d: [i64; 3] = [0, 0, 100];
+    let test: [[i64; 3]; 3] = [[100, 0, 50], [-50, 50, 50], [-50, -50, 50]];
+    let d: [i64; 3] = [0, 0, 100];
     println!("{}", intersect(&test, &d));
     let mut count: i32 = 0;
     for i in 1..2_000_000 {
