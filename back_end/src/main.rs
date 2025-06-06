@@ -4,6 +4,7 @@ fn main() {
     let mut rng = rand::rng();
     let test: [[i64; 3]; 3] = [[100, 0, 50], [-50, 50, 50], [-50, -50, 50]];
     let d: [i64; 3] = [0, 0, 100];
+    println!("{}", determinant(&[d, diff(&test[0], &test[1]), diff(&test[0], &test[2])]));
     println!("{}", intersect(&test, &d));
     let mut count: i32 = 0;
     for i in 1..2_000_000 {
@@ -34,24 +35,24 @@ fn intersect(triangle: &[[i64; 3]; 3], ray: &[i64; 3]) -> f32 {
     let ab = diff(&triangle[0], &triangle[1]);
     let ac = diff(&triangle[0], &triangle[2]);
     let mut arr: [[i64; 3]; 3] = [*ray, ab, ac];
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     let det_base: f32 = determinant(&arr) as f32;
     if det_base.abs() < 0.0001 {
         return -1.0;
     }
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     arr[0] = triangle[0];
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     let c: f32 = determinant(&arr) as f32 / det_base;
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     arr[0] = *ray;
     arr[1] = triangle[0];
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     let u: f32 = determinant(&arr) as f32 / det_base;
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     arr[1] = ab;
     arr[2] = triangle[0];
-    arr = transpose(&arr);
+    //arr = transpose(&arr);
     let v: f32 = determinant(&arr) as f32 / det_base;
     if u > 0.0 {
         if v > 0.0 {
