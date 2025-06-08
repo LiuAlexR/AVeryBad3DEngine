@@ -90,7 +90,7 @@ fn intersect(triangle: &[[i64; 3]; 3], ray: &[i64; 3]) -> f32 {
     let v: f32 = determinant(&arr) as f32 / det_base;
     if u > 0.0 {
         if v > 0.0 {
-            if u + v < 1.0001 {
+            if u + v < 1.000001 {
                 return c;
             }
         }
