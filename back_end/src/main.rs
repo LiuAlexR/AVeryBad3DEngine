@@ -2,7 +2,8 @@ use rand::Rng;
 fn main() {
     let start = std::time::Instant::now();
     let mut rng = rand::rng();
-    let test: [[i64; 3]; 3] = [[50, 0, 50], [-50, 50, 50], [-50, -50, 50]];
+    let test: [[i64; 3]; 3] = [[-50, -50, 50], [-50, 50, 50], [50, -50, 50]];
+    let test2: [[i64; 3]; 3] = [[50, 50, 50], [-50, 50, 50], [50, -50, 50]];
     let d: [i64; 3] = [0, 0, 100];
     {
     /*println!("{}", determinant(&[d, diff(&test[0], &test[1]), diff(&test[0], &test[2])]));
@@ -17,7 +18,7 @@ fn main() {
     }
     println!("{}", count);*/
     }
-    let camera: [[i64; 3]; 5] = [[0, 0, 0], [-200, 200, 100], [200, 200, 100], [200, -200, 100], [-200,-200, 100]]; //Counterclockwise, starting from top left
+    let camera: [[i64; 3]; 5] = [[0, 0, 0], [200, -200, 100], [-200,-200, 100], [-200, 200, 100], [200, 200, 100]]; //Counterclockwise, starting from bottom right
     let d0 = &camera[1];
     let dx = diff(&camera[4], &camera[1]);
     println!("dx: {} {} {}", dx[0], dx[1], dx[2]);
@@ -26,19 +27,22 @@ fn main() {
     let MAX_HEIGHT: i64 = 10;
     let MAX_WIDTH: i64 = 10;
     let mut ray: [i64; 3] = [camera[1][0], camera[1][1], camera[1][2]];
+    println!("|‾‾‾‾‾‾‾‾‾|");
     for height in 1..MAX_HEIGHT {
         let rayV = add(d0, &mult(&dy, (height as f64) / (MAX_HEIGHT as f64)));
-        
+        print!("|");
         for width in 1..MAX_WIDTH{
             let rayVH = add(&rayV, &mult(&dx, (width as f64) / (MAX_WIDTH as f64)));
-            if intersect(&test, &rayVH) == -1.0 {
-                print!(" ");
-            } else {
+            if intersect(&test, &rayVH) != -1.0 || intersect(&test2, &rayVH) != -1.0{
                 print!("*");
+            } else {
+                print!(" ");
             }
         }
+        print!("|");
         println!()
     }
+    println!("|_________|");
     println!("{}", start.elapsed().as_millis());
 }
 fn determinant(mat: &[[i64; 3]; 3]) -> i64 {
@@ -86,7 +90,7 @@ fn intersect(triangle: &[[i64; 3]; 3], ray: &[i64; 3]) -> f32 {
     let v: f32 = determinant(&arr) as f32 / det_base;
     if u > 0.0 {
         if v > 0.0 {
-            if u + v < 1.0 {
+            if u + v < 1.0001 {
                 return c;
             }
         }
