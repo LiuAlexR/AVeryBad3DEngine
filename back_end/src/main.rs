@@ -2,9 +2,10 @@ use rand::Rng;
 fn main() {
     let start = std::time::Instant::now();
     let mut rng = rand::rng();
-    let test: [[i64; 3]; 3] = [[100, 0, 50], [-50, 50, 50], [-50, -50, 50]];
+    let test: [[i64; 3]; 3] = [[50, 0, 50], [-50, 50, 50], [-50, -50, 50]];
     let d: [i64; 3] = [0, 0, 100];
-    println!("{}", determinant(&[d, diff(&test[0], &test[1]), diff(&test[0], &test[2])]));
+    {
+    /*println!("{}", determinant(&[d, diff(&test[0], &test[1]), diff(&test[0], &test[2])]));
     println!("{}", intersect(&test, &d));
     let mut count: i32 = 0;
     for i in 1..2_000_000 {
@@ -14,7 +15,30 @@ fn main() {
             count = count + 1;
         }
     }
-    println!("{}", count);
+    println!("{}", count);*/
+    }
+    let camera: [[i64; 3]; 5] = [[0, 0, 0], [-200, 200, 100], [200, 200, 100], [200, -200, 100], [-200,-200, 100]]; //Counterclockwise, starting from top left
+    let d0 = &camera[1];
+    let dx = diff(&camera[4], &camera[1]);
+    println!("dx: {} {} {}", dx[0], dx[1], dx[2]);
+    let dy = diff(&camera[2], &camera[1]);
+    println!("dy: {} {} {}", dy[0], dy[1], dy[2]);
+    let MAX_HEIGHT: i64 = 10;
+    let MAX_WIDTH: i64 = 10;
+    let mut ray: [i64; 3] = [camera[1][0], camera[1][1], camera[1][2]];
+    for height in 1..MAX_HEIGHT {
+        let rayV = add(d0, &mult(&dy, (height as f64) / (MAX_HEIGHT as f64)));
+        
+        for width in 1..MAX_WIDTH{
+            let rayVH = add(&rayV, &mult(&dx, (width as f64) / (MAX_WIDTH as f64)));
+            if intersect(&test, &rayVH) == -1.0 {
+                print!(" ");
+            } else {
+                print!("*");
+            }
+        }
+        println!()
+    }
     println!("{}", start.elapsed().as_millis());
 }
 fn determinant(mat: &[[i64; 3]; 3]) -> i64 {
@@ -22,6 +46,12 @@ fn determinant(mat: &[[i64; 3]; 3]) -> i64 {
 }
 fn diff(v1: &[i64; 3], v2: &[i64; 3]) -> [i64; 3]{
     [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]]
+}
+fn add(v1: &[i64; 3], v2: &[i64; 3]) -> [i64; 3]{
+    [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]]
+}
+fn mult(v1: &[i64; 3], num: f64) -> [i64; 3]{
+    [(v1[0] as f64 * num) as i64, (v1[1] as f64 * num) as i64, (v1[2]  as f64 * num) as i64]
 }
 fn transpose(mat: &[[i64; 3]; 3]) -> [[i64; 3]; 3] {
     [[mat[0][0], mat[1][0], mat[2][0]], [mat[0][1], mat[1][1], mat[2][1]], [mat[0][2], mat[1][2], mat[2][2]]]
