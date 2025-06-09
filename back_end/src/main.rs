@@ -24,16 +24,18 @@ fn main() {
     println!("dx: {} {} {}", dx[0], dx[1], dx[2]);
     let dy = diff(&camera[2], &camera[1]);
     println!("dy: {} {} {}", dy[0], dy[1], dy[2]);
-    let MAX_HEIGHT: i64 = 10;
-    let MAX_WIDTH: i64 = 10;
+    let MAX_HEIGHT: i64 = 480;
+    let MAX_WIDTH: i64 = 640;
     let mut ray: [i64; 3] = [camera[1][0], camera[1][1], camera[1][2]];
     println!("|‾‾‾‾‾‾‾‾‾|");
     for height in 1..MAX_HEIGHT {
         let rayV = add(d0, &mult(&dy, (height as f64) / (MAX_HEIGHT as f64)));
+        let mut count = 1;
         print!("|");
         for width in 1..MAX_WIDTH{
             let rayVH = add(&rayV, &mult(&dx, (width as f64) / (MAX_WIDTH as f64)));
-            if intersect(&test, &rayVH) != -1.0 || intersect(&test2, &rayVH) != -1.0{
+            if intersect(&test, &rayVH) != -1.0 /*|| intersect(&test2, &rayVH) != -1.0*/{
+                count = count + 1;
                 print!("*");
             } else {
                 print!(" ");
@@ -43,7 +45,7 @@ fn main() {
         println!()
     }
     println!("|_________|");
-    println!("{}", start.elapsed().as_millis());
+    println!("{}", start.elapsed().as_micros() as f64 / 1000.0);
 }
 fn determinant(mat: &[[i64; 3]; 3]) -> i64 {
     mat[0][0] * (mat[1][1] * mat [2][2] - mat[2][1] * mat[1][2]) - mat[0][1] * (mat[1][0] * mat [2][2] - mat[2][0] * mat[1][2]) + mat[0][2] * (mat[1][0] * mat [2][1] - mat[2][0] * mat[1][1])
@@ -78,22 +80,27 @@ fn intersect(triangle: &[[i64; 3]; 3], ray: &[i64; 3]) -> f32 {
     arr[0] = triangle[0];
     //arr = transpose(&arr);
     let c: f32 = determinant(&arr) as f32 / det_base;
+    if c < 0.0001 || c > 1.0001 {
+        return -1.0;
+    }
     //arr = transpose(&arr);
     arr[0] = *ray;
     arr[1] = triangle[0];
     //arr = transpose(&arr);
     let u: f32 = determinant(&arr) as f32 / det_base;
+    if u < 0.0 {
+        return -1.0;
+    }
     //arr = transpose(&arr);
     arr[1] = ab;
     arr[2] = triangle[0];
     //arr = transpose(&arr);
     let v: f32 = determinant(&arr) as f32 / det_base;
-    if u > 0.0 {
-        if v > 0.0 {
-            if u + v < 1.0000001 {
-                return c;
-            }
-        }
+    if v < 0.0 {
+        return -1.0;
+    }
+    if u + v < 1.0001 {
+        return c;
     }
     return -1.0;
 
